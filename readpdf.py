@@ -19,11 +19,12 @@ f.close()
 
 f = open('./Hello.txt','r')
 
+extracts = []
 
-# for line in f.readlines():
-#     print(line + '\r\n')
-lines = f.readlines()
-print(lines[0])
+for page in f.readlines():
+    extracts.append(page.split('CLIENT FACTURE',5))
+
+print(extracts)
 
 f.close()
   
