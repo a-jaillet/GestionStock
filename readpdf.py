@@ -20,11 +20,21 @@ f.close()
 f = open('./Hello.txt','r')
 
 extracts = []
+i=0
 
 for page in f.readlines():
-    extracts.append(page.split('CLIENT FACTURE',5))
+    extracts.append(page.split('CLIENT FACTURE',1))
+    if(len(extracts[i])>1):
+        del extracts[i][1]
+    else:
+        del extracts[i]
+        i=i-1
+    i+=1
+    
 
-print(extracts)
+for page in extracts:
+    print(page)
+    print('\r\n')
 
 f.close()
   
