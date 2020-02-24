@@ -4,7 +4,7 @@ import PyPDF2
 
 f = open('./Hello.txt','w')
 # creating a pdf file object 
-pdfFileObj = open('unpdf.pdf', 'rb') 
+pdfFileObj = open('oui.pdf', 'rb') 
   
 # creating a pdf reader object 
 pdfReader = PyPDF2.PdfFileReader(pdfFileObj) 
@@ -111,7 +111,6 @@ for i in range(0,len(listarticle)):
     parse = (' '.join(parse)).split('net')
     if len(parse) >1:
         listarticleparse.append(parse)
-#print(listarticleparse)
 
 #On remet en place le nombre de colis et cols
 for i in range (0,len(listarticleparse)):
@@ -125,6 +124,7 @@ for i in range (0,len(listarticleparse)):
                 der = ''.join(parseder[0:2])+' '+''.join(parseder[2:len(parseder)])
             parse[len(parse)-1]=der
         listarticleparse[i][j]=' '.join(parse)
+
 
 #On enleve toutes les infos inutiles pour avoir ce qu'on veut traiter
 listarticle = []
@@ -144,17 +144,33 @@ for i in range (0,len(listarticleparse)):
 
         listarticle.append(article)
 
+#On vire les palettes et les administratif
+asupprimer = []
+article = []
+for i in range (0,len(listarticle)):
+    if len(listarticle[i])==0:
+        asupprimer.append(i)
+    if len(listarticle[i])>2:
+        parse = listarticle[i].split()
+        if parse[0]=='PALETTE':
+            asupprimer.append(i)
+        if parse[0]=='ad':
+            asupprimer.append(i)
+        if parse[0]=='administratifs':
+            asupprimer.append(i)
+        
+        #dead la mise en forme
+        article.append(' '.join(parse[0:len(parse)-1]))
+        article.append(parse[len(parse)-1])
+        listarticle[i]=article
+        article = []
 
-# for i in range (0,len(listarticle)-1):
-#     article= []
-#     if len(listarticle[i])>2:
-#         articleparse = listarticle[i].split
-#         article.append(' '.join(articleparse[0:len(articleparse)-1]))
-#         article.append(articleparse[len(articleparse)-1])
-#         listarticle[i] = article
+for i in range(len(asupprimer)-1,-1,-1):
+    del listarticle[asupprimer[i]]
 
 
-# print(listarticleparse[0])
+# for article in listarticle:
+#     print(article)
         
 # closing the pdf file object 
 pdfFileObj.close() 
