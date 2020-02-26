@@ -1,10 +1,10 @@
 
 # importing required modules 
 import PyPDF2 
-
+pdf = input()
 f = open('./Hello.txt','w')
 # creating a pdf file object 
-pdfFileObj = open('oui.pdf', 'rb') 
+pdfFileObj = open(pdf, 'rb') 
   
 # creating a pdf reader object 
 pdfReader = PyPDF2.PdfFileReader(pdfFileObj) 
@@ -76,12 +76,14 @@ for i in range(0,len(listfactures2)):
 listarticle = []
 listconsigne = []
 
-
 for page in listfactures:
     if page[0]=='_':
         listconsigne.append(page)
     else:
         listarticle.append(page)
+
+for i in range(0,len(listarticle)):
+    listarticle[i] = listarticle[i].replace('19,5L','20L')
 
 listarticleparse = []
 for i in range(0,len(listarticle)):
@@ -89,7 +91,6 @@ for i in range(0,len(listarticle)):
     #Pour parser joliment
     while '' in parse:
         del parse[parse.index('')]
-
     #On enleve les elements à virgules qui servent un peut a rien (aussi ceux des °)
     asupprimer = []
     asup = []
@@ -98,12 +99,6 @@ for i in range(0,len(listarticle)):
             asupprimer.append(j)
         if '°' in parse[j]:
             asupprimer.append(j)
-
-    for j in range(0,len(asupprimer)-1):  #On remet la grolsch
-        if '19,5L' == parse[asupprimer[j]]:
-            asup.append(j)
-    for j in range(len(asup)-1,-1,-1):
-        del asupprimer[asup[j]]
 
     for j in range(len(asupprimer)-1,-1,-1):
         del parse[asupprimer[j]]
@@ -124,6 +119,7 @@ for i in range (0,len(listarticleparse)):
                 der = ''.join(parseder[0:2])+' '+''.join(parseder[2:len(parseder)])
             parse[len(parse)-1]=der
         listarticleparse[i][j]=' '.join(parse)
+
 
 
 #On enleve toutes les infos inutiles pour avoir ce qu'on veut traiter
@@ -158,7 +154,10 @@ for i in range (0,len(listarticle)):
             asupprimer.append(i)
         if parse[0]=='administratifs':
             asupprimer.append(i)
-        
+        if parse[0]=='REPRISE':
+            asupprimer.append(i)
+        if parse[0]=='CAFE':
+            asupprimer.append(i)
         #dead la mise en forme
         article.append(' '.join(parse[0:len(parse)-1]))
         article.append(parse[len(parse)-1])
@@ -169,8 +168,31 @@ for i in range(len(asupprimer)-1,-1,-1):
     del listarticle[asupprimer[i]]
 
 
-# for article in listarticle:
-#     print(article)
-        
+#On veut voir les remisé séparément mais ils seront toujours pris en compte dans le calcul total
+# !!!! On ne gere pas les remises à plus de 10 fûts !!!!
+listarticleremise = []
+for article in listarticle:
+    if len(article[1])>3:
+        parse = article[1].split()
+        listarticleremise.append(article)
+        article[1] = parse[1][0]
+
+listarticlesomme = []
+nomarticle = []
+for article in listarticle:
+    parse = []
+    parse.append(article[0])
+    parse.append(int(article[1]))
+    if parse[0] in nomarticle:
+        for article2 in listarticlesomme:
+            if article2[0]==parse[0]:
+                article2[1]=article2[1]+parse[1]
+    else:
+        nomarticle.append(parse[0])
+        listarticlesomme.append(parse)
+
+for article in listarticlesomme:
+    print(article)
+
 # closing the pdf file object 
 pdfFileObj.close() 
