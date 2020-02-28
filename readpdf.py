@@ -1,20 +1,27 @@
 
 # importing required modules 
 import PyPDF2 
-pdf = input()
 f = open('./Hello.txt','w')
-# creating a pdf file object 
-pdfFileObj = open(pdf, 'rb') 
-  
-# creating a pdf reader object 
-pdfReader = PyPDF2.PdfFileReader(pdfFileObj) 
-  
-# printing number of pages in pdf file 
-# creating a page object 
-for i in range(0,pdfReader.numPages) : 
-    pageObj = pdfReader.getPage(i) 
-    f.write(pageObj.extractText())
-    f.write('\r\n')
+
+#Gérer plusierus pdfs
+print('Indiquez le nombre de pdf à parser')
+n=input()
+for i in range(0,int(n)):
+    # creating a pdf file object 
+    print('indiquez le pdf : ')
+    pdf = input()
+    pdfFileObj = open(pdf, 'rb') 
+    
+    # creating a pdf reader object 
+    pdfReader = PyPDF2.PdfFileReader(pdfFileObj) 
+
+    # printing number of pages in pdf file 
+    # creating a page object 
+    for i in range(0,pdfReader.numPages) : 
+        pageObj = pdfReader.getPage(i) 
+        f.write(pageObj.extractText())
+        f.write('\r\n')
+    pdfFileObj.close() 
 f.close()
 
 f = open('./Hello.txt','r')
@@ -24,7 +31,7 @@ i=0
 
 for page in f.readlines():
     extracts.append(page)
-
+f.close()
 #On crée 2 listes pour séparer les factures des avoirs
 i=0
 j=0
@@ -158,6 +165,8 @@ for i in range (0,len(listarticle)):
             asupprimer.append(i)
         if parse[0]=='CAFE':
             asupprimer.append(i)
+        if parse[0]=='CHOCOLAT':
+            asupprimer.append(i)
         #dead la mise en forme
         article.append(' '.join(parse[0:len(parse)-1]))
         article.append(parse[len(parse)-1])
@@ -191,8 +200,7 @@ for article in listarticle:
         nomarticle.append(parse[0])
         listarticlesomme.append(parse)
 
-for article in listarticlesomme:
-    print(article)
-
+for i in listarticlesomme:
+    print(i)
 # closing the pdf file object 
-pdfFileObj.close() 
+
