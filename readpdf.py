@@ -5,36 +5,34 @@ from tkinter import *
 from tkinter.messagebox import *
 from tkinter.filedialog import *
 
-def calculPdf(n):
-    f = open('./Hello.txt','w')
-    for i in range (0,n):
-        #On ouvre les pdfs que l'on veut en interface graphique
-        pdf = askopenfilename(title="Ouvrir votre document",filetypes=[('all files','.*')])
-        pdfFileObj = open(pdf, 'rb') 
-        
-        # creating a pdf reader object 
-        pdfReader = PyPDF2.PdfFileReader(pdfFileObj) 
 
-        # printing number of pages in pdf file 
-        # creating a page object 
-        for i in range(0,pdfReader.numPages) : 
-            pageObj = pdfReader.getPage(i) 
-            f.write(pageObj.extractText())
-            f.write('\r\n')
-        pdfFileObj.close() 
-    f.close()
+def ajouter_facture():
+    #On ouvre les pdfs que l'on veut en interface graphique
+    pdf = askopenfilename(title="Ouvrir votre document",filetypes=[('all files','.*')])
+    pdfFileObj = open(pdf, 'rb') 
+        
+    # creating a pdf reader object 
+    pdfReader = PyPDF2.PdfFileReader(pdfFileObj) 
+
+    # printing number of pages in pdf file 
+    # creating a page object 
+    for i in range(0,pdfReader.numPages) : 
+        pageObj = pdfReader.getPage(i) 
+        f.write(pageObj.extractText())
+        f.write('\r\n')
+    pdfFileObj.close() 
+    return 0
+
+def calcul():
 
     f = open('./Hello.txt','r')
 
     extracts = []
-    i=0
 
     for page in f.readlines():
         extracts.append(page)
     f.close()
     #On crée 2 listes pour séparer les factures des avoirs
-    i=0
-    j=0
     listfactures = []
     for page in extracts:
         if 'FACTURECOMMUNAUTE' in page:
@@ -199,20 +197,44 @@ def calculPdf(n):
         else:
             nomarticle.append(parse[0])
             listarticlesomme.append(parse)
+
+    articletext = ''
+    for i in listarticlesomme:
+        articletext += (i[0] + ' : ' + str(i[1]) + '\n')
+
+    # Label(fenetre, text = articletext).pack()
+    w = Text(fenetre, height=10, borderwidth=0)
+    w.insert(1.0, articletext)
+    w.pack()
+    # l = LabelFrame(fenetre, text="Articles", padx=20, pady=20)
+    # l.pack(fill="both", expand="yes")
+ 
+    # Label(l, text=articletext).pack()
+    
     return listarticlesomme
 
 
 #Gérer plusieurs pdfs
 fenetre = Tk()
-label = Label(fenetre, text="Bienvenue sur l'outil d'aide à la gestion de stock.\n Cet outil te servira à rentrer tes factures beaucoup plus rapidement sur ton tableur. \n Merci de rentrer le nombre de facture à traiter ci-dessous")
+label = Label(fenetre, text="Bienvenue sur l'outil d'aide à la gestion de stock.\n \n Cet outil te servira à rentrer tes factures beaucoup plus rapidement sur ton tableur. \n \n")
 label.pack()
 
-print('Afficher le nombre de factures')
-n = int(input())
-listarticles = calculPdf(n)
+# bouton de sortie
+bouton_facture=Button(fenetre, text="Ajouter une facture", command=ajouter_facture)
+bouton_facture.pack(side = LEFT)
 
-for i in listarticles:
-    print(i)
+f = open('./Hello.txt','w')
+
+# bouton de sortie
+bouton_calcul=Button(fenetre, text="Lancer le calcul", command=calcul)
+bouton_calcul.pack(side = RIGHT)
+
+
+bouton=Button(fenetre, text="Fermer", command=fenetre.quit)
+bouton.pack(side = BOTTOM)
+
+
+
 
 fenetre.mainloop()
 
