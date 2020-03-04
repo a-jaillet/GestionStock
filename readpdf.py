@@ -7,7 +7,7 @@ from tkinter.filedialog import *
 
 def calculPdf(n):
     f = open('./Hello.txt','w')
-    for i in range(0,n):
+    for i in range (0,n):
         #On ouvre les pdfs que l'on veut en interface graphique
         pdf = askopenfilename(title="Ouvrir votre document",filetypes=[('all files','.*')])
         pdfFileObj = open(pdf, 'rb') 
@@ -202,15 +202,17 @@ def calculPdf(n):
     return listarticlesomme
 
 
-
 #Gérer plusieurs pdfs
 fenetre = Tk()
 label = Label(fenetre, text="Bienvenue sur l'outil d'aide à la gestion de stock.\n Cet outil te servira à rentrer tes factures beaucoup plus rapidement sur ton tableur. \n Merci de rentrer le nombre de facture à traiter ci-dessous")
 label.pack()
 
-print('Indiquez le nombre de pdf à parser')
-n=input()
+print('Afficher le nombre de factures')
+n = int(input())
+listarticles = calculPdf(n)
 
-listarticles = calculPdf(int(n))
 for i in listarticles:
     print(i)
+
+fenetre.mainloop()
+
